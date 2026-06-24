@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FixIt — Maintenance Portal</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet" />
+</head>
+
+<body>
+
+    <!-- Static copy of FixIt — no backend required -->
+
+    <!-- ════════════════════════════════════════
+     AUTH SCREEN (Login / Register)
+════════════════════════════════════════ -->
+    <div id="auth-screen" class="auth-screen">
+        <div class="auth-bg-pattern"></div>
+        <div class="auth-left">
+            <div class="auth-brand">
+                <span class="brand-icon spin">⚙</span>
+                <span class="brand-name">FIX<span class="accent">IT</span></span>
+            </div>
+            <h1 class="auth-tagline">Report.<br><span class="accent">Track.</span><br>Resolve.</h1>
+            <p class="auth-sub">A smarter way to manage maintenance issues — from electrical failures to sanitation
+                problems.
+            </p>
+            <div class="auth-features">
+                <div class="auth-feat"><span>⚡</span> Real-time complaint tracking</div>
+                <div class="auth-feat"><span>🔒</span> Role-based access control</div>
+                <div class="auth-feat"><span>🗄️</span> Browser storage persistence</div>
+                <div class="auth-feat"><span>📊</span> Admin dashboard & analytics</div>
+            </div>
+        </div>
+
+        <div class="auth-right">
+            <!-- LOGIN FORM -->
+            <div class="auth-card" id="login-card">
+                <p class="auth-card-tag mono">// SIGN IN</p>
+                <h2 class="auth-card-title">Welcome Back</h2>
+                <p class="auth-card-sub">Enter your credentials to access the portal</p>
+
+                <div id="login-error" class="auth-alert" style="display:none"></div>
+
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" id="login-email" class="form-input" placeholder="your@email.com"
+                        autocomplete="email" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="pw-wrap">
+                        <input type="password" id="login-pw" class="form-input" placeholder="••••••••"
+                            autocomplete="current-password" />
+                        <button type="button" class="pw-toggle" onclick="togglePw('login-pw',this)">👁</button>
+                    </div>
+                </div>
+                <button class="btn-primary full" id="login-btn" onclick="doLogin()">Sign In →</button>
+                <p class="auth-switch">Don't have an account? <a href="#" onclick="showRegister()">Create one</a></p>
+            </div>
+
+            <!-- REGISTER FORM -->
+            <div class="auth-card" id="register-card" style="display:none">
+                <p class="auth-card-tag mono">// CREATE ACCOUNT</p>
+                <h2 class="auth-card-title">Join FixIt</h2>
+                <p class="auth-card-sub">Register to file and track maintenance complaints</p>
+
+                <div id="reg-error" class="auth-alert" style="display:none"></div>
+                <div id="reg-success" class="auth-alert success" style="display:none"></div>
+
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" id="reg-name" class="form-input" placeholder="Your full name" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" id="reg-email" class="form-input" placeholder="your@email.com" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="pw-wrap">
+                        <input type="password" id="reg-pw" class="form-input" placeholder="Min. 6 characters" />
+                        <button type="button" class="pw-toggle" onclick="togglePw('reg-pw',this)">👁</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirm Password</label>
+                    <input type="password" id="reg-pw2" class="form-input" placeholder="Repeat password" />
+                </div>
+                <button class="btn-primary full" id="reg-btn" onclick="doRegister()">Create Account →</button>
+                <p class="auth-switch">Already have an account? <a href="#" onclick="showLogin()">Sign in</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+     MAIN APP
+════════════════════════════════════════ -->
+    <div id="app-screen" style="display:none">
+
+        <!-- NAVBAR -->
+        <nav class="navbar">
+            <div class="nav-brand">
+                <span class="brand-icon spin">⚙</span>
+                <span class="brand-name">FIX<span class="accent">IT</span></span>
+            </div>
+            <div class="nav-links" id="nav-links">
+                <a href="#" class="nav-link active" data-page="dashboard">Dashboard</a>
+                <a href="#" class="nav-link" data-page="report">Report Issue</a>
+                <a href="#" class="nav-link" data-page="track">My Complaints</a>
+            </div>
+            <div class="nav-right">
+                <div class="nav-user">
+                    <span class="nav-user-avatar" id="nav-avatar">U</span>
+                    <span class="nav-user-name" id="nav-name">User</span>
+                    <span class="nav-role-badge" id="nav-role-badge"></span>
+                </div>
+                <button class="btn-ghost small" onclick="doLogout()">Sign Out</button>
+            </div>
+        </nav>
+
+        <!-- ── DASHBOARD ── -->
+        <section class="page active" id="page-dashboard">
+            <div class="hero">
+                <div class="hero-text">
+                    <p class="hero-tag mono">// MAINTENANCE MANAGEMENT SYSTEM</p>
+                    <h1 class="hero-title" id="hero-greeting">Good Day!</h1>
+                    <p class="hero-sub">Monitor complaints in real-time, track resolutions, and keep your facility
+                        running
+                        smoothly.</p>
+                    <div class="hero-actions">
+                        <button class="btn-primary" onclick="navigate('report')">+ File a Complaint</button>
+                        <button class="btn-ghost" onclick="navigate('track')">Track Issues →</button>
+                    </div>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-card"><span class="stat-num" id="s-total">0</span><span class="stat-label">Total
+                            Reports</span><span class="stat-icon">📋</span></div>
+                    <div class="stat-card urgent"><span class="stat-num" id="s-open">0</span><span
+                            class="stat-label">Open</span><span class="stat-icon">🔴</span></div>
+                    <div class="stat-card warning"><span class="stat-num" id="s-prog">0</span><span
+                            class="stat-label">In
+                            Progress</span><span class="stat-icon">🔧</span></div>
+                    <div class="stat-card success"><span class="stat-num" id="s-res">0</span><span
+                            class="stat-label">Resolved</span><span class="stat-icon">✅</span></div>
+                </div>
+            </div>
+
+            <div class="section-title-row">
+                <h2 class="section-title">Recent <span class="accent">Activity</span></h2>
+                <button class="btn-ghost small" onclick="navigate('track')">View All →</button>
+            </div>
+            <div class="recent-list" id="recent-list">
+                <p class="empty-state mono">// Loading...</p>
+            </div>
+
+            <h2 class="section-title" style="margin-top:2.5rem">Issue <span class="accent">Categories</span></h2>
+            <div class="category-grid">
+                <div class="cat-card" onclick="prefill('electrical')">
+                    <div class="cat-icon">⚡</div>
+                    <div class="cat-name">Electrical</div>
+                    <div class="cat-desc">Power outages, faulty wiring, lighting failures</div>
+                </div>
+                <div class="cat-card" onclick="prefill('water')">
+                    <div class="cat-icon">💧</div>
+                    <div class="cat-name">Water / Plumbing</div>
+                    <div class="cat-desc">Leakages, pipe bursts, drainage issues</div>
+                </div>
+                <div class="cat-card" onclick="prefill('sanitation')">
+                    <div class="cat-icon">🧹</div>
+                    <div class="cat-name">Sanitation</div>
+                    <div class="cat-desc">Waste disposal, hygiene, cleaning requests</div>
+                </div>
+                <div class="cat-card" onclick="prefill('structural')">
+                    <div class="cat-icon">🏗️</div>
+                    <div class="cat-name">Structural</div>
+                    <div class="cat-desc">Wall cracks, roof damage, flooring issues</div>
+                </div>
+                <div class="cat-card" onclick="prefill('hvac')">
+                    <div class="cat-icon">❄️</div>
+                    <div class="cat-name">HVAC</div>
+                    <div class="cat-desc">AC/heating failures, ventilation problems</div>
+                </div>
+                <div class="cat-card" onclick="prefill('other')">
+                    <div class="cat-icon">🔩</div>
+                    <div class="cat-name">Other</div>
+                    <div class="cat-desc">Any other maintenance concern</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── REPORT ── -->
+        <section class="page" id="page-report">
+            <div class="page-header">
+                <p class="mono accent">// NEW COMPLAINT</p>
+                <h2 class="page-title">File a Maintenance Issue</h2>
+            </div>
+            <div class="form-container">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Location / Block <span class="accent">*</span></label>
+                        <input type="text" id="f-location" class="form-input" placeholder="e.g. Block C, Room 204" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Category <span class="accent">*</span></label>
+                        <select id="f-category" class="form-input">
+                            <option value="">— Select Category —</option>
+                            <option value="electrical">⚡ Electrical</option>
+                            <option value="water">💧 Water / Plumbing</option>
+                            <option value="sanitation">🧹 Sanitation</option>
+                            <option value="structural">🏗️ Structural</option>
+                            <option value="hvac">❄️ HVAC</option>
+                            <option value="other">🔩 Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Priority Level <span class="accent">*</span></label>
+                    <div class="priority-group">
+                        <label class="priority-opt low"><input type="radio" name="priority" value="low" /> Low</label>
+                        <label class="priority-opt medium"><input type="radio" name="priority" value="medium" />
+                            Medium</label>
+                        <label class="priority-opt high"><input type="radio" name="priority" value="high" />
+                            High</label>
+                        <label class="priority-opt critical"><input type="radio" name="priority" value="critical" />
+                            Critical</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Issue Title <span class="accent">*</span></label>
+                    <input type="text" id="f-title" class="form-input" placeholder="Brief title of the issue" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Detailed Description <span class="accent">*</span></label>
+                    <textarea id="f-description" class="form-input textarea" rows="4"
+                        placeholder="Describe the issue in detail..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Attach Photo (optional)</label>
+                    <div class="file-drop" id="file-drop" onclick="document.getElementById('f-photo').click()">
+                        <span class="file-icon">📎</span>
+                        <span id="file-label">Click to attach image or drag & drop</span>
+                        <input type="file" id="f-photo" accept="image/*" style="display:none"
+                            onchange="handleFile(this)" />
+                    </div>
+                    <div id="photo-preview-wrap" style="display:none;gap:1rem;align-items:center;margin-top:0.8rem">
+                        <img id="photo-preview" src="" alt="preview" class="photo-preview" />
+                        <button type="button" class="btn-ghost small" onclick="removePhoto()">✕ Remove</button>
+                    </div>
+                </div>
+                <div id="report-error" class="auth-alert" style="display:none;margin-bottom:1rem"></div>
+                <div id="report-success" class="auth-alert success" style="display:none;margin-bottom:1rem"></div>
+                <div class="form-actions">
+                    <button class="btn-ghost" onclick="resetForm()">Clear</button>
+                    <button class="btn-primary" onclick="submitComplaint()">Submit Complaint →</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── TRACK / MY COMPLAINTS ── -->
+        <section class="page" id="page-track">
+            <div class="page-header">
+                <p class="mono accent" id="track-heading-tag">// MY COMPLAINTS</p>
+                <h2 class="page-title" id="track-heading">My Complaints</h2>
+            </div>
+            <div class="filter-bar">
+                <input type="text" class="form-input search-input" id="search-input"
+                    placeholder="🔍  Search by title, location, ticket ID..." oninput="renderTracker()" />
+                <select class="form-input filter-select" id="filter-status" onchange="renderTracker()">
+                    <option value="">All Statuses</option>
+                    <option value="open">Open</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="resolved">Resolved</option>
+                    <option value="closed">Closed</option>
+                </select>
+                <select class="form-input filter-select" id="filter-cat" onchange="renderTracker()">
+                    <option value="">All Categories</option>
+                    <option value="electrical">Electrical</option>
+                    <option value="water">Water / Plumbing</option>
+                    <option value="sanitation">Sanitation</option>
+                    <option value="structural">Structural</option>
+                    <option value="hvac">HVAC</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="complaints-table-wrap">
+                <table class="complaints-table">
+                    <thead>
+                        <tr>
+                            <th>Ticket</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Location</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="complaints-tbody"></tbody>
+                </table>
+                <p class="empty-state mono" id="track-empty" style="display:none">// No complaints match your filters.
+                </p>
+            </div>
+        </section>
+
+        <!-- ── ADMIN PANEL ── -->
+        <section class="page" id="page-admin">
+            <div class="page-header">
+                <p class="mono accent">// ADMIN PANEL</p>
+                <h2 class="page-title">Manage All Complaints</h2>
+            </div>
+            <div class="admin-controls">
+                <button class="btn-ghost small" onclick="exportCSV()">⬇ Export CSV</button>
+                <button class="btn-ghost small" onclick="navigate('users')">👥 User List</button>
+            </div>
+            <div class="admin-cards" id="admin-cards">
+                <p class="empty-state mono">// Loading...</p>
+            </div>
+        </section>
+
+        <!-- ── USERS (Admin) ── -->
+        <section class="page" id="page-users">
+            <div class="page-header">
+                <p class="mono accent">// USER DATABASE</p>
+                <h2 class="page-title">Registered Users</h2>
+            </div>
+            <div class="complaints-table-wrap">
+                <table class="complaints-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Registered</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-tbody"></tbody>
+                </table>
+                <p class="empty-state mono" id="users-empty" style="display:none">// No users found.</p>
+            </div>
+        </section>
+
+    </div><!-- /app-screen -->
+
+    <!-- ── DETAIL MODAL ── -->
+    <div class="modal-overlay" id="modal-overlay" onclick="closeModal()">
+        <div class="modal" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+            <p class="mono accent" id="modal-ticket"></p>
+            <h3 id="modal-title"></h3>
+            <div class="modal-meta" id="modal-meta"></div>
+            <div class="modal-grid">
+                <div class="modal-row"><b>Reporter:</b> <span id="modal-name"></span></div>
+                <div class="modal-row"><b>Contact:</b> <span id="modal-contact"></span></div>
+                <div class="modal-row"><b>Location:</b> <span id="modal-location"></span></div>
+                <div class="modal-row"><b>Filed:</b> <span id="modal-date"></span></div>
+            </div>
+            <div class="modal-desc" id="modal-desc"></div>
+            <img id="modal-photo" src="" alt="" class="modal-photo" style="display:none" />
+            <div class="modal-timeline" id="modal-timeline"></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
